@@ -1,0 +1,5 @@
+name: td_projects
+dependencies:
+  - conda-forge::sentence-transformers
+  - pip
+  - jupyter
