@@ -3,3 +3,6 @@ dependencies:
   - conda-forge::sentence-transformers
   - pip
   - jupyter
+  - huggingface_hub
+  - chardet
+
