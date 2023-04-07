@@ -12,14 +12,17 @@ class EenaduSpider(scrapy.Spider):
         for title in response.css('.article-title'):
             if title.css('::text').get():
                 all_titles.append(title.css('::text').get())
-                yield {"title: " + title.css('::text').get()}
+                yield {'title': title.css('::text').get()}
 
         if response.css('a'):
             for next_page in response.css('a'):
-                if next_page.css('a').attrib['href'].startswith("https://www.eenadu.net"):
-                    yield response.follow(next_page, self.parse)
+                next_page_link = next_page.css('a').attrib['href']
+                if next_page_link.startswith("https://www.eenadu.net"):
+                    if next_page_link not in scraped_urls:
+                        yield response.follow(next_page, self.parse)
         else:
             scraped_urls.append(response.css('a').attrib['href'])
+            yield None
 
 
 def scrapycrawl():
