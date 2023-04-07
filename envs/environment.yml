@@ -5,4 +5,7 @@ dependencies:
   - jupyter
   - huggingface_hub
   - chardet
+  - scrapy
+  - beautifulsoup4
+  - requests
 
