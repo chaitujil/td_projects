@@ -1,12 +1,21 @@
 import scrapy
+import csv
+
 from scrapy.crawler import CrawlerProcess
 
 scraped_urls = []
 all_titles = []
 
+header = ['title', 'text', 'link']
+
+f = open('eenadu_data.csv', 'w', encoding='UTF8')
+writer = csv.writer(f)
+writer.writerow(["title", "text", "link"])
+
+
 class EenaduSpider(scrapy.Spider):
     name = 'telugu-news-bot1'
-    start_urls = ['https://www.eenadu.net/']
+    start_urls = ['https://www.eenadu.net']
 
     def parse(self, response):
         current_link = response.url
@@ -14,13 +23,18 @@ class EenaduSpider(scrapy.Spider):
         if last_token.isdigit() and \
                 "photos" not in current_link and "video" not in current_link:
             if current_link.startswith("https://www.eenadu.net/"):
-                print("Scraped: " + current_link)
+                # print("Scraped: " + current_link)
                 scraped_urls.append(current_link)
                 title = response.xpath("//h1[@class='red']/text()").extract()
-                text = response.xpath("//div/p/text()").extract()
-                if title and text:
-                    all_titles.append(title[0])
-                    yield {'title': title[0], 'text': text[0]}
+                text = response.css(".fullstory").xpath(".//p//text()").getall()
+                filtered_titles = [x for x in title if not x.isalpha()]
+                filtered_text = [x for x in text if not x.isalpha()]
+                full_title = ' '.join(filtered_titles)
+                full_text = ' '.join(filtered_text)
+                if full_title and full_text:
+                    all_titles.append(full_title)
+                    writer.writerow([full_title, full_text, current_link])
+                    yield {'title': full_title, 'text': full_text}
 
         if response.css('a') and not last_token.isdigit():
             for next_page in response.css('a'):
@@ -44,13 +58,18 @@ class EenaduSpider2(scrapy.Spider):
         if last_token.isdigit() and \
                 "photos" not in current_link and "video" not in current_link:
             if current_link.startswith("https://www.eenadu.net/"):
-                print("Scraped: " + current_link)
+                # print("Scraped: " + current_link)
                 scraped_urls.append(current_link)
                 title = response.xpath("//h1[@class='red']/text()").extract()
-                text = response.xpath("//div/p/text()").extract()
-                if title and text:
-                    all_titles.append(title[0])
-                    yield {'title': title[0], 'text': text[0]}
+                text = response.css(".fullstory").xpath(".//p//text()").getall()
+                filtered_titles = [x for x in title if not x.isalpha()]
+                filtered_text = [x for x in text if not x.isalpha()]
+                full_title = ' '.join(filtered_titles)
+                full_text = ' '.join(filtered_text)
+                if full_title and full_text:
+                    all_titles.append(full_title)
+                    writer.writerow([full_title, full_text, current_link])
+                    yield {'title': full_title, 'text': full_text}
 
         if response.css('a') and not last_token.isdigit():
             for next_page in response.css('a'):
@@ -73,3 +92,4 @@ if __name__ == "__main__":
 
     print(all_titles)
     print(scraped_urls)
+    f.close()
