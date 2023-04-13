@@ -1,11 +1,22 @@
 name: td_projects
+channels:
+  - conda-forge
 dependencies:
-  - conda-forge::sentence-transformers
   - pip
+  - conda-forge::sentence-transformers
   - jupyter
   - huggingface_hub
   - chardet
   - scrapy
   - beautifulsoup4
   - requests
+  - numpy
+  - fasttext
+  - pandas
+  - transformers
+  - nomkl
+  - pip:
+    - streamlit
+  - dmnapolitano::bert-extractive-summarizer==0.5.1
+
 
